@@ -1,25 +1,15 @@
 const express = require("express");
-const { ObjectId } = require("mongodb");
 
 module.exports = (db) => {
   const router = express.Router();
   const productsCollection = db.collection("products");
   const categoriesCollection = db.collection("categories");
 
-  // Helper function to validate collections
-  const validateCollections = (res) => {
-    if (!productsCollection || !categoriesCollection) {
-      res.status(500).json({ message: "Database collections not initialized" });
-      return false;
-    }
-    return true;
-  };
 
   // Get all products
   router.get("/", async (req, res) => {
     try {
-      if (!validateCollections(res)) return;
-
+   
       const products = await productsCollection.find().toArray();
       if (!products || products.length === 0) {
         return res.status(404).json({ message: "No products found" });
@@ -66,7 +56,6 @@ module.exports = (db) => {
   // Get all categories
   router.get("/categories", async (req, res) => {
     try {
-      if (!validateCollections(res)) return;
 
       const categories = await categoriesCollection.find().toArray();
       if (!categories || categories.length === 0) {
@@ -81,7 +70,6 @@ module.exports = (db) => {
   // Get featured categories (updated to actually filter featured)
   router.get("/featuredCategories/:name", async (req, res) => {
     try {
-      if (!validateCollections(res)) return;
       const { name } = req.params;
       if (name === "all") {
         const featuredCategories = await categoriesCollection.find().toArray();
@@ -113,7 +101,6 @@ module.exports = (db) => {
   // Get products by category
   router.get("/category/:category", async (req, res) => {
     try {
-      if (!validateCollections(res)) return;
 
       const { category } = req.params;
       let products;
@@ -140,11 +127,10 @@ module.exports = (db) => {
     }
   });
 
-  // Other endpoints follow the same pattern with try-catch and validation
-  // Get Top-Selling Products
+
   router.get("/top-sales", async (req, res) => {
     try {
-      if (!validateCollections(res)) return;
+      
 
       const products = await productsCollection
         .find()
