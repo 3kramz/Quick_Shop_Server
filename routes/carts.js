@@ -68,9 +68,7 @@ module.exports = (db) => {
       res.status(500).json({ message: "Server error while adding to cart." });
     }
   });
-  
-  
-  
+
 router.patch("/update", async (req, res) => {
   const { email, menuId, quantity } = req.body;
 
@@ -89,9 +87,6 @@ router.patch("/update", async (req, res) => {
     res.status(404).json({ message: "Item not found in cart" });
   }
 });
-
-
-
   
 router.delete("/", async (req, res) => {
   const { email, menuId } = req.body;
@@ -105,15 +100,12 @@ router.delete("/", async (req, res) => {
   res.status(200).json({ message: "Product removed from cart" });
 });
 
-
 router.delete("/clear", async (req, res) => {
   const { email } = req.body;
   await cartsCollection.updateOne({ email }, { $set: { cart: [] } });
   res.status(200).json({ message: "Cart cleared" });
 });
 
-
-// Assuming this is your existing backend route to apply coupon
 router.post("/coupon", async (req, res) => {
   const { email, coupon } = req.body;
 
@@ -147,8 +139,6 @@ router.post("/coupon", async (req, res) => {
   });
 });
 
-
-  
 router.post("/coupon/remove", async (req, res) => {
   const { email } = req.body;
 
@@ -175,8 +165,6 @@ router.post("/coupon/remove", async (req, res) => {
     cart: updatedCart,
   });
 });
-
-
 
   return router;
 };
