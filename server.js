@@ -15,11 +15,13 @@ async function startServer() {
   const productRoutes = require("./routes/productRoutes")(db);
   const carts = require("./routes/carts")(db);
   const orders = require("./routes/orders")(db);
+  const users = require("./routes/users")(db);
   
   app.use("/products", productRoutes);
 
   app.use("/carts", carts);
   app.use("/orders", orders);
+  app.use("/users", users);
 
   const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
