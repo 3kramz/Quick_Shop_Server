@@ -1,12 +1,12 @@
 const express = require("express");
 
-module.exports = (db) => {
+module.exports = (db,verifyToken) => {
   const router = express.Router();
   const cartsCollection = db.collection("carts");
   const productsCollection = db.collection("products");
   const couponsCollection = db.collection("coupons");
   
-  router.get("/", async (req, res) => {
+  router.get("/", verifyToken, async (req, res) => {
     try {
       const { email } = req.query;
       if (!email) return res.status(400).json({ message: "Email is required" });
@@ -29,7 +29,7 @@ module.exports = (db) => {
     }
   });
   
-  router.post("/", async (req, res) => {
+  router.post("/",verifyToken, async (req, res) => {
     try {
       const { email, menuId, quantity = 1 } = req.body;
   
@@ -69,7 +69,7 @@ module.exports = (db) => {
     }
   });
 
-router.patch("/update", async (req, res) => {
+router.patch("/update",verifyToken, async (req, res) => {
   const { email, menuId, quantity } = req.body;
 
   if (!email || !menuId || quantity < 1) {
@@ -88,7 +88,7 @@ router.patch("/update", async (req, res) => {
   }
 });
   
-router.delete("/", async (req, res) => {
+router.delete("/",verifyToken, async (req, res) => {
   const { email, menuId } = req.body;
 
   const cart = await cartsCollection.findOne({ email });
@@ -100,13 +100,13 @@ router.delete("/", async (req, res) => {
   res.status(200).json({ message: "Product removed from cart" });
 });
 
-router.delete("/clear", async (req, res) => {
+router.delete("/clear",verifyToken, async (req, res) => {
   const { email } = req.body;
   await cartsCollection.updateOne({ email }, { $set: { cart: [] } });
   res.status(200).json({ message: "Cart cleared" });
 });
 
-router.post("/coupon", async (req, res) => {
+router.post("/coupon",verifyToken, async (req, res) => {
   const { email, coupon } = req.body;
 
   console.log("Applying coupon for user:", email, "Coupon:", coupon);
@@ -139,7 +139,7 @@ router.post("/coupon", async (req, res) => {
   });
 });
 
-router.post("/coupon/remove", async (req, res) => {
+router.post("/coupon/remove",verifyToken, async (req, res) => {
   const { email } = req.body;
 
   if (!email) {

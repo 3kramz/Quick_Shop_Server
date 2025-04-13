@@ -1,11 +1,11 @@
 const express = require("express");
 
-module.exports = (db) => {
+module.exports = (db,verifyToken) => {
   const router = express.Router();
   const ordersCollection = db.collection("orders");
 
   
-  router.post('/', async (req, res) => {
+  router.post('/',verifyToken, async (req, res) => {
     try {
       const order = req.body;
       const result = await ordersCollection.insertOne(order);
@@ -17,5 +17,5 @@ module.exports = (db) => {
   
 
 
-  return router;
+  return router;  
 };
