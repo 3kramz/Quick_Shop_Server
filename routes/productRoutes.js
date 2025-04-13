@@ -81,7 +81,6 @@ module.exports = (db) => {
         }
         res.json(featuredCategories);
       } else {
-        console.log(name);
         const featuredCategories = await categoriesCollection
           .find({ categories: name })
           .toArray();

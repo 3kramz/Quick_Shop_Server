@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 
 module.exports = (db) => {
   const router = express.Router();
+  
+  const usersCollection = db.collection("users");
 
   router.post("/", async (req, res) => {
     const user = req.body;
@@ -13,7 +15,7 @@ module.exports = (db) => {
   });
 
   const verifyToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
+      const authHeader = req.headers.authorization;
     if (!authHeader) {
         return res.status(401).send({ message: "unauthorized access" });
     }
@@ -27,9 +29,19 @@ module.exports = (db) => {
       next();
     });
   };
-
+  const verifyAdmin = async (req, res, next) => {
+    const email = req.decoded.email;
+    const query = { email: email };
+    const user = await usersCollection.findOne(query);
+    const isAdmin = user?.role === 'admin';
+    if (!isAdmin) {
+      return res.status(403).send({ message: 'forbidden access' });
+    }
+    next();
+  }
   return {
     jwtRouter: router,
     verifyToken,
+    verifyAdmin
   };
 };

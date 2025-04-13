@@ -109,33 +109,28 @@ router.delete("/clear",verifyToken, async (req, res) => {
 router.post("/coupon",verifyToken, async (req, res) => {
   const { email, coupon } = req.body;
 
-  console.log("Applying coupon for user:", email, "Coupon:", coupon);
-
-  // Find the coupon in the database
   const code = await couponsCollection.findOne({ code: coupon });
 
   if (!code) {
     return res.status(400).json({ message: "Invalid coupon code." });
   }
 
-  // Get the user's cart
+ 
   const cart = await cartsCollection.findOne({ email });
   if (!cart) {
     return res.status(404).json({ message: "Cart not found." });
   }
 
-  // Apply the coupon to the cart
   await cartsCollection.updateOne(
     { email },
     { $set: { coupon: { code: coupon, discount: code.discount } } }
   );
 
-  // Send the updated cart back to the frontend
   const updatedCart = await cartsCollection.findOne({ email });
 
   res.status(200).json({
     message: `Coupon "${code}" applied successfully!`,
-    cart: updatedCart, // Send the full updated cart with the coupon applied
+    cart: updatedCart,
   });
 });
 

@@ -12,12 +12,12 @@ app.use(cors());
 async function startServer() {
   const db = await connectDB();
   
-  const { jwtRouter, verifyToken } = jwtModule(db);
+  const { jwtRouter, verifyToken, verifyAdmin } = jwtModule(db);
   
   const productRoutes = require("./routes/productRoutes")(db);
   const carts = require("./routes/carts")(db, verifyToken);
-  const orders = require("./routes/orders")(db, verifyToken);
-  const users = require("./routes/users")(db, verifyToken);
+  const orders = require("./routes/orders")(db, verifyToken, verifyAdmin);
+  const users = require("./routes/users")(db, verifyToken, verifyAdmin);
 
   // ✅ Mount JWT Auth route
   app.use("/jwt", jwtRouter);
