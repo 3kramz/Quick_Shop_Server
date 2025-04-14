@@ -1,10 +1,17 @@
 const express = require("express");
 
-module.exports = (db) => {
+module.exports = (db, verifyToken, verifyAdmin) => {
   const router = express.Router();
   const productsCollection = db.collection("products");
   const categoriesCollection = db.collection("categories");
 
+
+
+  router.post('/', verifyToken, verifyAdmin, async (req, res) => {
+    const item = req.body;
+    const result = await productsCollection.insertOne(item);
+    res.send(result);
+  });
 
   // Get all products
   router.get("/", async (req, res) => {
@@ -19,6 +26,8 @@ module.exports = (db) => {
       res.status(500).json({ message: err.message });
     }
   });
+
+
 
   // Get single product by ID
   router.get("/product/:id", async (req, res) => {

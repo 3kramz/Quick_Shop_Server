@@ -14,12 +14,12 @@ async function startServer() {
   
   const { jwtRouter, verifyToken, verifyAdmin } = jwtModule(db);
   
-  const productRoutes = require("./routes/productRoutes")(db);
+  const productRoutes = require("./routes/productRoutes")(db, verifyToken, verifyAdmin);
   const carts = require("./routes/carts")(db, verifyToken);
   const orders = require("./routes/orders")(db, verifyToken, verifyAdmin);
   const users = require("./routes/users")(db, verifyToken, verifyAdmin);
 
-  // ✅ Mount JWT Auth route
+
   app.use("/jwt", jwtRouter);
 
   app.use("/products", productRoutes);
