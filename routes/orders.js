@@ -31,7 +31,7 @@ module.exports = (db,verifyToken,verifyAdmin) => {
     }
   });
 
-  router.patch('/status/:id',verifyToken,verifyAdmin, async (req, res) => {
+  router.patch('/status/:id',verifyToken, async (req, res) => {
     const orderId = req.params.id;
     const { status } = req.body;
     if (!status) {
@@ -57,7 +57,7 @@ module.exports = (db,verifyToken,verifyAdmin) => {
   });
 
   
-  router.post('/',verifyToken,verifyAdmin, async (req, res) => {
+  router.post('/',verifyToken, async (req, res) => {
     try {
       const order = req.body;
       const result = await ordersCollection.insertOne(order);

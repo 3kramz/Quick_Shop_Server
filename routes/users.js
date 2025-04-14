@@ -30,9 +30,8 @@ module.exports = (db, verifyToken, verifyAdmin) => {
     }
   });
 
-  router.get("/admin/:email", verifyToken, verifyAdmin, async (req, res) => {
+  router.get("/admin/:email", verifyToken, async (req, res) => {
     const email = req.params.email;
-
     if (email !== req.decoded.email) {
       return res.status(403).send({ message: "forbidden access" });
     }

@@ -9,6 +9,7 @@ module.exports = (db,verifyToken) => {
   router.get("/", verifyToken, async (req, res) => {
     try {
       const { email } = req.query;
+      
       if (!email) return res.status(400).json({ message: "Email is required" });
   
       const userCart = await cartsCollection.findOne({ email });
