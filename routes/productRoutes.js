@@ -1,4 +1,5 @@
 const express = require("express");
+const { ObjectId } = require("mongodb");
 
 module.exports = (db, verifyToken, verifyAdmin) => {
   const router = express.Router();
@@ -29,20 +30,65 @@ module.exports = (db, verifyToken, verifyAdmin) => {
 
 
 
-  // Get single product by ID
+
   router.get("/product/:id", async (req, res) => {
     try {
       const { id } = req.params;
-
-
       const product = await productsCollection.findOne({
-        _id: id
-      });
+        _id: new ObjectId(id)
+      }); 
+      
       res.json(product);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+
+      try {
+        const { id } = req.params;
+        const product = await productsCollection.findOne({
+          _id: id
+        }); 
+        
+        res.json(product);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
     }
   });
+
+  router.delete("/product/:id", async (req, res) => {
+    const { id } = req.params;
+
+  
+    try {
+      const result = await productsCollection.deleteOne({ _id: new ObjectId(id) });
+  
+      if (result.deletedCount > 0) {
+        res.status(200).json({ message: "Product deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Product not found" });
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  router.patch("/product/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updatedData = req.body;
+  
+      const result = await productsCollection.updateOne(
+        { _id:   new ObjectId(id) },
+        { $set: updatedData }
+      );
+  
+      res.json(result);
+    } catch (error) {
+      console.error("Update Product Error:", error);
+      res.status(500).json({ message: "Failed to update product" });
+    }
+  });
+
 
   // Get popular products
   router.get("/popular", async (req, res) => {
