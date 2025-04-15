@@ -15,6 +15,14 @@ module.exports = (db,verifyToken,verifyAdmin) => {
     }
   });
 
+  // Node.js/Express
+router.get("/user/:email",verifyToken, async (req, res) => {
+  const email = req.params.email;
+  const userOrders = await ordersCollection.find({ userEmail: email }).toArray();
+  res.send(userOrders);
+});
+
+
   // Update order status
   router.patch("/:id", verifyToken,verifyAdmin, async (req, res) => {
     const { id } = req.params;
@@ -31,7 +39,7 @@ module.exports = (db,verifyToken,verifyAdmin) => {
     }
   });
 
-  router.patch('/status/:id',verifyToken, async (req, res) => {
+  router.patch('/status/:id',verifyToken,verifyAdmin, async (req, res) => {
     const orderId = req.params.id;
     const { status } = req.body;
     if (!status) {
