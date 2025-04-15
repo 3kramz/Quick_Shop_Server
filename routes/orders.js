@@ -15,6 +15,30 @@ module.exports = (db,verifyToken,verifyAdmin) => {
     }
   });
 
+  router.post("/track",verifyToken, async (req, res) => {
+    const { orderId, email } = req.body;
+  
+    if (!orderId || !email) {
+      return res.status(400).send({ message: "Order ID and email are required" });
+    }
+  
+    try {
+      const order = await ordersCollection.findOne({
+        _id: new ObjectId(orderId),
+        userEmail: email,
+      });
+  
+      if (!order) {
+        return res.status(404).send({ message: "Order not found or email does not match" });
+      }
+  
+      res.send(order);
+    } catch (error) {
+      console.error("Error tracking order:", error);
+      res.status(500).send({ message: "Failed to track order" });
+    }
+  });
+
   // Node.js/Express
 router.get("/user/:email",verifyToken, async (req, res) => {
   const email = req.params.email;
