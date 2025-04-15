@@ -19,9 +19,7 @@ async function startServer() {
   const orders = require("./routes/orders")(db, verifyToken, verifyAdmin);
   const users = require("./routes/users")(db, verifyToken, verifyAdmin);
 
-
   app.use("/jwt", jwtRouter);
-
   app.use("/products", productRoutes);
   app.use("/carts", carts);
   app.use("/orders", orders);
