@@ -54,7 +54,7 @@ module.exports = (db, verifyToken, verifyAdmin) => {
     }
   });
 
-  router.delete("/product/:id", async (req, res) => {
+  router.delete("/product/:id",verifyToken,verifyAdmin, async (req, res) => {
     const { id } = req.params;
 
   

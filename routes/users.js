@@ -12,9 +12,25 @@ module.exports = (db, verifyToken, verifyAdmin) => {
     if (existingUser) {
       return res.send({ message: "user already exists", insertedId: null });
     }
-
     user = { ...user, createdAt: new Date(), role: "customer" };
     const result = await usersCollection.insertOne(user);
+    res.send(result);
+  });
+
+  router.get("/user/:email",verifyToken, async (req, res) => {
+    const email = req.params.email;
+    const user = await usersCollection.findOne({ email });
+    res.send(user);
+  });
+
+  router.put("/user/:email/address",verifyToken ,async (req, res) => {
+    const email = req.params.email;
+    const { type, updatedAddress } = req.body;
+    const result = await usersCollection.updateOne(
+      { email },
+      { $set: { [`addresses.${type}`]: updatedAddress } }
+    );
+
     res.send(result);
   });
 
