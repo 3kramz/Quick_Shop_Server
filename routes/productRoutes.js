@@ -6,9 +6,7 @@ module.exports = (db, verifyToken, verifyAdmin) => {
   const productsCollection = db.collection("products");
   const categoriesCollection = db.collection("categories");
 
-
-
-  router.post('/', verifyToken, verifyAdmin, async (req, res) => {
+  router.post("/", verifyToken, verifyAdmin, async (req, res) => {
     const item = req.body;
     const result = await productsCollection.insertOne(item);
     res.send(result);
@@ -17,7 +15,6 @@ module.exports = (db, verifyToken, verifyAdmin) => {
   // Get all products
   router.get("/", async (req, res) => {
     try {
-   
       const products = await productsCollection.find().toArray();
       if (!products || products.length === 0) {
         return res.status(404).json({ message: "No products found" });
@@ -28,25 +25,21 @@ module.exports = (db, verifyToken, verifyAdmin) => {
     }
   });
 
-
-
-
   router.get("/product/:id", async (req, res) => {
     try {
       const { id } = req.params;
       const product = await productsCollection.findOne({
-        _id: new ObjectId(id)
-      }); 
-      
+        _id: new ObjectId(id),
+      });
+
       res.json(product);
     } catch (err) {
-
       try {
         const { id } = req.params;
         const product = await productsCollection.findOne({
-          _id: id
-        }); 
-        
+          _id: id,
+        });
+
         res.json(product);
       } catch (error) {
         res.status(500).json({ message: error.message });
@@ -54,21 +47,33 @@ module.exports = (db, verifyToken, verifyAdmin) => {
     }
   });
 
-  router.delete("/product/:id",verifyToken,verifyAdmin, async (req, res) => {
+  router.delete("/product/:id", verifyToken, verifyAdmin, async (req, res) => {
     const { id } = req.params;
 
-  
     try {
-      const result = await productsCollection.deleteOne({ _id: new ObjectId(id) });
-  
+      const result = await productsCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+
       if (result.deletedCount > 0) {
         res.status(200).json({ message: "Product deleted successfully" });
       } else {
         res.status(404).json({ message: "Product not found" });
       }
     } catch (error) {
-      console.error("Error deleting product:", error);
-      res.status(500).json({ message: "Internal server error" });
+      try {
+        const result = await productsCollection.deleteOne({
+          _id: id,
+        });
+
+        if (result.deletedCount > 0) {
+          res.status(200).json({ message: "Product deleted successfully" });
+        } else {
+          res.status(404).json({ message: "Product not found" });
+        }
+      } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+      }
     }
   });
 
@@ -76,19 +81,18 @@ module.exports = (db, verifyToken, verifyAdmin) => {
     try {
       const { id } = req.params;
       const updatedData = req.body;
-  
+
       const result = await productsCollection.updateOne(
-        { _id:   new ObjectId(id) },
+        { _id: new ObjectId(id) },
         { $set: updatedData }
       );
-  
+
       res.json(result);
     } catch (error) {
       console.error("Update Product Error:", error);
       res.status(500).json({ message: "Failed to update product" });
     }
   });
-
 
   // Get popular products
   router.get("/popular", async (req, res) => {
@@ -99,7 +103,7 @@ module.exports = (db, verifyToken, verifyAdmin) => {
         .limit(8)
         .toArray();
 
-      if (!products || products.length === 0) { 
+      if (!products || products.length === 0) {
         return res.status(404).json({ message: "No popular products found" });
       }
       res.json(products);
@@ -111,7 +115,6 @@ module.exports = (db, verifyToken, verifyAdmin) => {
   // Get all categories
   router.get("/categories", async (req, res) => {
     try {
-
       const categories = await categoriesCollection.find().toArray();
       if (!categories || categories.length === 0) {
         return res.status(404).json({ message: "No categories found" });
@@ -155,7 +158,6 @@ module.exports = (db, verifyToken, verifyAdmin) => {
   // Get products by category
   router.get("/category/:category", async (req, res) => {
     try {
-
       const { category } = req.params;
       let products;
 
@@ -181,11 +183,8 @@ module.exports = (db, verifyToken, verifyAdmin) => {
     }
   });
 
-
   router.get("/top-sales", async (req, res) => {
     try {
-      
-
       const products = await productsCollection
         .find()
         .sort({ sales: -1 })
