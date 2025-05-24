@@ -9,10 +9,10 @@ const client = new MongoClient(uri);
 async function connectDB() {
   try {
     await client.connect(); 
-    console.log("MongoDB Connected successfully");
+    // console.log("MongoDB Connected successfully");
     return client.db("Quick_Shop");
   } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
+    // console.error("MongoDB connection failed:", error.message);
     process.exit(1);
   }
 }
